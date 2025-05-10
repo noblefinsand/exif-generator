@@ -11,13 +11,13 @@ import {
 import { useExifContext } from "../context/context";
 
 const ExifTable = () => {
-  const { exifData, handleReset, formatCellValue} = useExifContext();
+  const { exifData, handleReset, formatCellValue } = useExifContext();
 
   const columns = [
     { name: "Tag", uid: "key" },
     { name: "Value", uid: "value" },
   ];
-  
+
   const rows = Object.entries(exifData).map(([key, value]) => ({
     key,
     value,
@@ -49,7 +49,13 @@ const ExifTable = () => {
           {(item: { key: string; value: unknown }) => (
             <Row>
               {(columnKey) => (
-                <Cell>{formatCellValue(item[columnKey as keyof typeof item])}</Cell>
+                <Cell>
+                  <div
+                    style={{ whiteSpace: "normal", wordBreak: "break-word" }}
+                  >
+                    {formatCellValue(item[columnKey as keyof typeof item])}
+                  </div>
+                </Cell>
               )}
             </Row>
           )}
