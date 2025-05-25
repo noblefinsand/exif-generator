@@ -44,8 +44,35 @@ export const ExifProvider: React.FC<{ children: React.ReactNode }> = ({
         const arrayBuffer = event.target?.result;
         if (arrayBuffer) {
           try {
-            const exifData = await EXIF.parse(arrayBuffer);
-            resolve(exifData);
+            // Configure exifr to parse additional metadata
+            const options = {
+              tiff: true,        // Standard TIFF metadata
+              exif: true,        // Standard EXIF metadata
+              gps: true,         // GPS information
+              xmp: true,         // Adobe XMP metadata
+              icc: true,         // Color profile information
+              iptc: true,        // IPTC metadata
+              jfif: true,        // JPEG metadata
+              interop: true,     // Interoperability data
+              makerNote: true,   // Camera manufacturer specific data
+              userComment: true, // User comments
+              multiSegment: true // Read from multiple segments
+            };
+
+            const exifData = await EXIF.parse(arrayBuffer, options);
+            
+            // Add file information
+            const enhancedData = {
+              ...exifData,
+              fileInfo: {
+                name: file.name,
+                size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+                type: file.type,
+                lastModified: new Date(file.lastModified).toLocaleString()
+              }
+            };
+
+            resolve(enhancedData);
           } catch (err) {
             reject(err);
           }
